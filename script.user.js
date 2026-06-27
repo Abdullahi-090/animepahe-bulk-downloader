@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AnimePahe Bulk Downloader
 // @namespace    https://github.com/Abdullahi-090
-// @version      1.0.5
+// @version      1.0.6
 // @author       CODEXA
 // @description  Batch download anime episodes from animepahe.pw with 720p quality, Japanese audio, and English subtitles. Auto-handles redirects and license key validation.
 // @homepage     https://github.com/Abdullahi-090/animepahe-bulk-downloader
@@ -162,119 +162,173 @@
 
         // --- Batch Download UI Setup ---
         function setupBatchUI() {
-            const maxAttempts = 20;
+            const maxAttempts = 30;
             let attempts = 0;
-
+        
             const interval = setInterval(() => {
                 attempts++;
-
+                
+                // Check if menu already exists
+                if (document.getElementById('batch-download-menu')) {
+                    clearInterval(interval);
+                    return;
+                }
+        
+                // Check if the page has loaded enough
                 let main = document.querySelector('.content-wrapper') ||
                            document.querySelector('.container') ||
                            document.querySelector('main') ||
                            document.querySelector('.anime-detail') ||
                            document.body;
-
-                if (document.getElementById('batch-download-menu')) {
-                    clearInterval(interval);
-                    return;
-                }
-
+        
                 if (main && attempts < maxAttempts) {
                     clearInterval(interval);
-                    createBatchMenu(main);
+                    createBatchMenu();
                 }
-
+        
                 if (attempts >= maxAttempts) {
                     clearInterval(interval);
                     console.warn('Batch Downloader: Could not find main content area.');
+                    // Force create it anyway
+                    createBatchMenu();
                 }
             }, 500);
         }
 
-        function createBatchMenu(main) {
+        function createBatchMenu() {
+            // Find the main content area
+            let main = document.querySelector('.content-wrapper') ||
+                       document.querySelector('.container') ||
+                       document.querySelector('main') ||
+                       document.querySelector('.anime-detail') ||
+                       document.body;
+        
+            // Create the menu
             const menu = document.createElement('div');
             menu.id = 'batch-download-menu';
             menu.style.cssText = `
                 position: relative;
-                background: #1a1a1a;
+                background: linear-gradient(135deg, #1a1a2e, #16213e);
                 color: #fff;
-                padding: 15px;
-                margin: 15px auto;
-                border: 1px solid #333;
-                border-radius: 8px;
+                padding: 20px 25px;
+                margin: 10px auto 20px auto;
+                border: 1px solid #e94560;
+                border-radius: 12px;
                 font-size: 14px;
-                z-index: 9999;
+                z-index: 99999;
                 max-width: 1100px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+                box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+                backdrop-filter: blur(5px);
+                clear: both;
             `;
-
+        
+            const titleRow = document.createElement('div');
+            titleRow.style.cssText = 'display: flex; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 12px;';
+        
             const title = document.createElement('div');
-            title.style.cssText = 'font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #ff6b6b;';
+            title.style.cssText = 'font-size: 20px; font-weight: bold; color: #e94560;';
             title.innerText = '📥 Batch Download';
-
+        
+            const qualityLabel = document.createElement('span');
+            qualityLabel.style.cssText = 'background: #e94560; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;';
+            qualityLabel.innerText = '🎯 720p · Sub (JP audio)';
+        
             const container = document.createElement('div');
             container.style.cssText = 'display: flex; flex-wrap: wrap; align-items: center; gap: 10px;';
-
+        
             const input = document.createElement('input');
             input.type = 'text';
             input.placeholder = 'e.g. 1-24 or 1,3,5,7-12';
             input.style.cssText = `
                 flex: 1;
                 min-width: 200px;
-                padding: 8px 12px;
-                border-radius: 4px;
+                padding: 10px 15px;
+                border-radius: 8px;
                 border: 1px solid #444;
-                background: #111;
+                background: #0d1117;
                 color: #fff;
                 font-size: 14px;
+                outline: none;
+                transition: border-color 0.3s;
             `;
-
+            input.onfocus = function() { this.style.borderColor = '#e94560'; };
+            input.onblur = function() { this.style.borderColor = '#444'; };
+        
             const button = document.createElement('button');
             button.innerText = '✨ Batch Download';
             button.style.cssText = `
-                background: #2d8f2d;
+                background: linear-gradient(135deg, #e94560, #c23152);
                 color: #fff;
                 border: none;
-                padding: 8px 20px;
+                padding: 10px 25px;
                 cursor: pointer;
-                border-radius: 4px;
+                border-radius: 8px;
                 font-size: 14px;
                 font-weight: bold;
-                transition: background 0.2s;
+                transition: all 0.3s;
+                box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
             `;
-            button.onmouseover = function() { this.style.background = '#3aad3a'; };
-            button.onmouseout = function() { this.style.background = '#2d8f2d'; };
-
-            const qualityLabel = document.createElement('span');
-            qualityLabel.style.cssText = 'color: #aaa; font-size: 13px;';
-            qualityLabel.innerText = '🎯 720p · Sub (JP audio)';
-
+            button.onmouseover = function() { 
+                this.style.transform = 'scale(1.03)';
+                this.style.boxShadow = '0 6px 25px rgba(233, 69, 96, 0.5)';
+            };
+            button.onmouseout = function() { 
+                this.style.transform = 'scale(1)';
+                this.style.boxShadow = '0 4px 15px rgba(233, 69, 96, 0.3)';
+            };
+        
+            // --- Reset License Button ---
+            const resetBtn = document.createElement('button');
+            resetBtn.innerText = '🔄 Reset License';
+            resetBtn.style.cssText = `
+                background: #333;
+                color: #fff;
+                border: none;
+                padding: 10px 20px;
+                cursor: pointer;
+                border-radius: 8px;
+                font-size: 13px;
+                font-weight: bold;
+                transition: all 0.3s;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            `;
+            resetBtn.onmouseover = function() { this.style.background = '#555'; };
+            resetBtn.onmouseout = function() { this.style.background = '#333'; };
+            resetBtn.onclick = function() {
+                if (confirm('This will remove your license key. You will need to re-enter it on the next page load. Continue?')) {
+                    GM_setValue('license_key', null);
+                    localStorage.removeItem('license_key');
+                    location.reload();
+                }
+            };
+        
+            // --- Batch Download Logic ---
             button.onclick = function() {
                 const pattern = input.value.trim();
                 if (!pattern) {
                     alert('Please enter episode numbers or ranges.');
                     return;
                 }
-
+        
                 const wanted = parsePattern(pattern);
                 const links = [...document.querySelectorAll('a')].filter(a => {
                     return a.href && a.href.includes('/play/') && a.textContent.match(/\b\d+\b/);
                 });
-
+        
                 const selected = links.filter(a => {
                     const match = a.textContent.match(/\b(\d+)\b/);
                     return match && wanted.includes(Number(match[1]));
                 });
-
+        
                 if (selected.length === 0) {
                     alert(`❌ No matching episodes found for: ${pattern}`);
                     return;
                 }
-
+        
                 if (!confirm(`Download ${selected.length} episode(s)?\n\nThis will open each in a new tab and auto-download.\nMake sure to ALLOW POP-UPS.`)) {
                     return;
                 }
-
+        
                 selected.forEach((a, i) => {
                     setTimeout(() => {
                         const newWindow = window.open(a.href, '_blank');
@@ -284,46 +338,74 @@
                     }, i * 800);
                 });
             };
-
+        
+            // --- Settings Row ---
             const settingsRow = document.createElement('div');
-            settingsRow.style.cssText = 'margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; border-top: 1px solid #333; padding-top: 10px;';
-
+            settingsRow.style.cssText = 'margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 15px; border-top: 1px solid #333; padding-top: 12px;';
+        
             const toggleLabel = document.createElement('label');
-            toggleLabel.style.cssText = 'color: #aaa; font-size: 13px; display: flex; align-items: center; gap: 5px; cursor: pointer;';
-
+            toggleLabel.style.cssText = 'color: #aaa; font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer;';
+            
             const toggleCheckbox = document.createElement('input');
             toggleCheckbox.type = 'checkbox';
             toggleCheckbox.checked = true;
-            toggleCheckbox.style.cssText = 'cursor: pointer;';
-
+            toggleCheckbox.style.cssText = 'cursor: pointer; width: 16px; height: 16px; accent-color: #e94560;';
+            
             const toggleText = document.createTextNode('Auto-select 720p Sub on play pages');
-
+        
             toggleLabel.appendChild(toggleCheckbox);
             toggleLabel.appendChild(toggleText);
             settingsRow.appendChild(toggleLabel);
-
-            toggleCheckbox.onchange = function() {
-                localStorage.setItem('animepahe_autoselect', JSON.stringify(this.checked));
-            };
-
+        
+            // Load saved preference
             try {
                 const saved = localStorage.getItem('animepahe_autoselect');
                 if (saved !== null) {
                     toggleCheckbox.checked = JSON.parse(saved);
                 }
             } catch(e) {}
-
+        
+            toggleCheckbox.onchange = function() {
+                localStorage.setItem('animepahe_autoselect', JSON.stringify(this.checked));
+            };
+        
             const tip = document.createElement('div');
             tip.style.cssText = 'margin-top: 8px; font-size: 12px; color: #888;';
-            tip.innerText = '💡 The script will auto-select 720p Sub and handle the kwik download link extraction.';
-
-            container.append(input, button, qualityLabel);
-            menu.append(title, container, settingsRow, tip);
-
-            if (main.firstChild) {
-                main.insertBefore(menu, main.firstChild);
+            tip.innerText = '💡 Enter episode ranges like "1-24" or "1,3,5,7-12". The script auto-selects 720p Sub (Japanese audio, English subs).';
+        
+            // --- Assemble the menu ---
+            titleRow.append(title, qualityLabel);
+            container.append(input, button, resetBtn);
+            menu.append(titleRow, container, settingsRow, tip);
+        
+            // --- Insert at the VERY TOP of the page ---
+            // Find the best place to insert
+            let insertTarget = document.querySelector('.anime-detail') || 
+                               document.querySelector('.content-wrapper') || 
+                               document.querySelector('.container') || 
+                               document.querySelector('main') || 
+                               document.body;
+        
+            // Try to insert before the poster or at the very top
+            let poster = document.querySelector('.anime-poster') || 
+                         document.querySelector('.poster') || 
+                         document.querySelector('img[alt*="poster"]') || 
+                         document.querySelector('.anime-cover');
+        
+            if (poster && poster.parentNode) {
+                // Insert before the poster's parent container
+                poster.parentNode.insertBefore(menu, poster.parentNode.firstChild);
+            } else if (insertTarget) {
+                // Fallback: insert at the top of the main container
+                insertTarget.insertBefore(menu, insertTarget.firstChild);
             } else {
-                main.appendChild(menu);
+                // Ultimate fallback: append to body
+                document.body.insertBefore(menu, document.body.firstChild);
+            }
+        
+            // Apply a margin to the poster to separate it from the menu
+            if (poster) {
+                poster.style.marginTop = '20px';
             }
         }
 
