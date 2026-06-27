@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AnimePahe Bulk Downloader
 // @namespace    https://github.com/Abdullahi-090
-// @version      1.0.4
+// @version      1.0.5
 // @author       CODEXA
 // @description  Batch download anime episodes from animepahe.pw with 720p quality, Japanese audio, and English subtitles. Auto-handles redirects and license key validation.
 // @homepage     https://github.com/Abdullahi-090/animepahe-bulk-downloader
@@ -41,16 +41,23 @@
     // --- Decrypt function ---
     function decryptKeys(encryptedData) {
         try {
+            // Step 1: Base64 decode the encrypted data
+            const raw = atob(encryptedData);
+            
             const passwordKey = SECRET_PASSWORD.split('').map(c => c.charCodeAt(0));
             const salt = 'static-salt-anime'.split('').map(c => c.charCodeAt(0));
             const keyBytes = [];
             for (let i = 0; i < 32; i++) {
                 keyBytes.push(passwordKey[i % passwordKey.length] ^ salt[i % salt.length]);
             }
+            
+            // Step 2: XOR decrypt the raw bytes
             const decrypted = [];
-            for (let i = 0; i < encryptedData.length; i++) {
-                decrypted.push(encryptedData.charCodeAt(i) ^ keyBytes[i % keyBytes.length]);
+            for (let i = 0; i < raw.length; i++) {
+                decrypted.push(raw.charCodeAt(i) ^ keyBytes[i % keyBytes.length]);
             }
+            
+            // Step 3: Convert to string and parse JSON
             const decryptedStr = String.fromCharCode.apply(null, decrypted);
             return JSON.parse(decryptedStr);
         } catch (e) {
