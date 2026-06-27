@@ -1,6 +1,13 @@
 // ==UserScript==
 // @name         AnimePahe Bulk Downloader
-// @version      1.0.0
+// @namespace    https://github.com/Abdullahi-090
+// @version      1.0.1
+// @author       Abdullahi-090
+// @description  Batch download anime episodes from animepahe.pw with 720p quality, Japanese audio, and English subtitles. Auto-handles redirects and license key validation.
+// @homepage     https://github.com/Abdullahi-090/animepahe-bulk-downloader
+// @homepageURL  https://github.com/Abdullahi-090/animepahe-bulk-downloader
+// @supportURL   https://github.com/Abdullahi-090/animepahe-bulk-downloader/issues
+// @license      Proprietary - Contact developer for licensing
 // @updateURL    https://cdn.jsdelivr.net/gh/Abdullahi-090/animepahe-bulk-downloader@main/version.json
 // @downloadURL  https://cdn.jsdelivr.net/gh/Abdullahi-090/animepahe-bulk-downloader@main/script.user.js
 // @match        https://animepahe.pw/*
@@ -18,9 +25,8 @@
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        unsafeWindow
-// @connect      raw.githubusercontent.com
+// @connect      cdn.jsdelivr.net
 // ==/UserScript==
-
 (function() {
     'use strict';
 
