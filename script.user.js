@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         AnimePahe Bulk Downloader
 // @version      1.0.0
-// @updateURL    https://raw.githubusercontent.com/Abdullahi-090/animepahe-bulk-downloader/main/version.json
-// @downloadURL  https://raw.githubusercontent.com/Abdullahi-090/animepahe-bulk-downloader/main/script.user.js
+// @updateURL    https://cdn.jsdelivr.net/gh/Abdullahi-090/animepahe-bulk-downloader@main/version.json
+// @downloadURL  https://cdn.jsdelivr.net/gh/Abdullahi-090/animepahe-bulk-downloader@main/script.user.js
 // @match        https://animepahe.pw/*
 // @match        https://animepahe.com/*
 // @match        https://animepahe.org/*
@@ -29,7 +29,7 @@
     // ============================================================
     const SECRET_PASSWORD = "MyS3cr3tP@ss";
     // ============================================================
-    const GITHUB_RAW = 'https://raw.githubusercontent.com/Abdullahi-090/animepahe-bulk-downloader/main';
+    const GITHUB_RAW = 'https://cdn.jsdelivr.net/gh/Abdullahi-090/animepahe-bulk-downloader@main';
 
     // --- Decrypt function ---
     function decryptKeys(encryptedData) {
