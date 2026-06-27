@@ -118,14 +118,9 @@
     }
 
     // ============================================================
-    // 🚀 YOUR FULL DOWNLOADER CODE (paste below)
+    // 🚀 YOUR FULL DOWNLOADER CODE
     // ============================================================
     function runDownloader() {
-        // ----- YOUR ORIGINAL SCRIPT (without the outer wrapper) -----
-        // I'm pasting everything from your original script here.
-        // Note: I removed the initial (function() { ... })(); wrapper.
-        // ----- BEGIN PASTE -----
-
         const url = window.location.href;
 
         // --- Routing ---
@@ -582,7 +577,6 @@
         }
 
         console.log('✅ Animepahe Batch Downloader loaded!');
-        // ----- END OF YOUR ORIGINAL SCRIPT -----
     }
 
     // --- Start the license check ---
